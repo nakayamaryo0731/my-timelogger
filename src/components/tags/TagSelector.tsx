@@ -30,7 +30,7 @@ function TagNode({
   isLast,
   allTags,
 }: TagNodeProps) {
-  const [expanded, setExpanded] = useState(true)
+  const [expanded, setExpanded] = useState(false)
   const hasChildren = tag.children.length > 0
   const isSelected = selectedId === tag.id
   const displayColor = getTagDisplayColor(tag, allTags)
