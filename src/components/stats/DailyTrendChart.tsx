@@ -1,6 +1,6 @@
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
@@ -9,33 +9,26 @@ import {
 } from 'recharts'
 import { formatDuration } from '@/hooks/useRecords'
 import type { Record } from '@/types'
-import type { Period } from './PeriodSelector'
 
 interface DailyTrendChartProps {
   records: Record[]
-  period: Period
 }
 
 interface ChartData {
   date: string
-  label: string
-  duration: number
+  daily: number
+  cumulative: number
 }
 
 function formatDateKey(date: Date): string {
   return date.toISOString().split('T')[0]
 }
 
-function formatDateLabel(dateStr: string, period: Period): string {
+function formatDateLabel(dateStr: string): string {
   const date = new Date(dateStr)
+  const year = date.getFullYear()
   const month = date.getMonth() + 1
-  const day = date.getDate()
-
-  if (period === '1w') {
-    const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()]
-    return `${month}/${day}\n${weekday}`
-  }
-  return `${month}/${day}`
+  return `${year}/${month}`
 }
 
 function getDatesInRange(start: Date, end: Date): string[] {
@@ -50,7 +43,7 @@ function getDatesInRange(start: Date, end: Date): string[] {
   return dates
 }
 
-export function DailyTrendChart({ records, period }: DailyTrendChartProps) {
+export function DailyTrendChart({ records }: DailyTrendChartProps) {
   if (records.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -59,7 +52,7 @@ export function DailyTrendChart({ records, period }: DailyTrendChartProps) {
     )
   }
 
-  // Get date range
+  // Get date range from records
   const dates = records.map(r => new Date(r.start_time))
   const minDate = new Date(Math.min(...dates.map(d => d.getTime())))
   const maxDate = new Date()
@@ -75,16 +68,21 @@ export function DailyTrendChart({ records, period }: DailyTrendChartProps) {
     dateDurations.set(dateKey, current + (record.duration ?? 0))
   }
 
-  // Create chart data for all dates in range
+  // Create chart data for all dates in range with cumulative values
   const allDates = getDatesInRange(minDate, maxDate)
-  const chartData: ChartData[] = allDates.map(dateStr => ({
-    date: dateStr,
-    label: formatDateLabel(dateStr, period),
-    duration: dateDurations.get(dateStr) ?? 0,
-  }))
+  let cumulative = 0
+  const chartData: ChartData[] = allDates.map(dateStr => {
+    const daily = dateDurations.get(dateStr) ?? 0
+    cumulative += daily
+    return {
+      date: dateStr,
+      daily,
+      cumulative,
+    }
+  })
 
-  // For longer periods, show fewer labels
-  const tickInterval = period === '1w' ? 0 : period === '1m' ? 6 : 13
+  // Show fewer labels for readability
+  const tickInterval = Math.max(1, Math.floor(chartData.length / 6))
 
   const CustomTooltip = ({
     active,
@@ -92,7 +90,7 @@ export function DailyTrendChart({ records, period }: DailyTrendChartProps) {
     label,
   }: {
     active?: boolean
-    payload?: { value: number }[]
+    payload?: { value: number; dataKey: string }[]
     label?: string
   }) => {
     if (active && payload && payload.length && label) {
@@ -100,6 +98,8 @@ export function DailyTrendChart({ records, period }: DailyTrendChartProps) {
       const month = date.getMonth() + 1
       const day = date.getDate()
       const weekday = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()]
+      const cumulativeValue = payload.find(p => p.dataKey === 'cumulative')?.value ?? 0
+      const dailyValue = chartData.find(d => d.date === label)?.daily ?? 0
 
       return (
         <div className="bg-popover border rounded-lg px-3 py-2 shadow-lg">
@@ -107,7 +107,10 @@ export function DailyTrendChart({ records, period }: DailyTrendChartProps) {
             {month}月{day}日 ({weekday})
           </p>
           <p className="text-sm text-muted-foreground">
-            {formatDuration(payload[0].value)}
+            この日: {formatDuration(dailyValue)}
+          </p>
+          <p className="text-sm text-primary font-medium">
+            累計: {formatDuration(cumulativeValue)}
           </p>
         </div>
       )
@@ -115,14 +118,18 @@ export function DailyTrendChart({ records, period }: DailyTrendChartProps) {
     return null
   }
 
-  // Calculate average for the period
-  const daysWithRecords = chartData.filter(d => d.duration > 0).length
-  const totalDuration = chartData.reduce((sum, d) => sum + d.duration, 0)
+  // Calculate stats
+  const daysWithRecords = chartData.filter(d => d.daily > 0).length
+  const totalDuration = chartData[chartData.length - 1]?.cumulative ?? 0
   const avgDuration = daysWithRecords > 0 ? Math.round(totalDuration / daysWithRecords) : 0
 
   return (
     <div>
       <div className="flex justify-center gap-8 mb-4 text-sm">
+        <div className="text-center">
+          <div className="font-mono font-medium">{formatDuration(totalDuration)}</div>
+          <div className="text-muted-foreground">累計</div>
+        </div>
         <div className="text-center">
           <div className="font-mono font-medium">{formatDuration(avgDuration)}</div>
           <div className="text-muted-foreground">1日平均</div>
@@ -133,11 +140,17 @@ export function DailyTrendChart({ records, period }: DailyTrendChartProps) {
         </div>
       </div>
       <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <defs>
+            <linearGradient id="colorCumulative" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+            </linearGradient>
+          </defs>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
           <XAxis
             dataKey="date"
-            tickFormatter={(value: string) => formatDateLabel(value, period)}
+            tickFormatter={formatDateLabel}
             interval={tickInterval}
             tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
             axisLine={{ stroke: 'hsl(var(--border))' }}
@@ -153,8 +166,14 @@ export function DailyTrendChart({ records, period }: DailyTrendChartProps) {
             tickLine={false}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Bar dataKey="duration" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-        </BarChart>
+          <Area
+            type="monotone"
+            dataKey="cumulative"
+            stroke="hsl(var(--primary))"
+            strokeWidth={2}
+            fill="url(#colorCumulative)"
+          />
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   )

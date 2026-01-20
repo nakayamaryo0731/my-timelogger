@@ -56,25 +56,30 @@ export function useRecordsByDate(date: Date) {
   })
 }
 
-// 期間指定で記録を取得
-export function useRecordsByPeriod(startDate: Date, endDate: Date) {
-  const start = getDayRange(startDate).start
+// 期間指定で記録を取得（startDate が null の場合は全期間）
+export function useRecordsByPeriod(startDate: Date | null, endDate: Date) {
   const end = getDayRange(endDate).end
 
   return useQuery({
     queryKey: [
       ...RECORDS_KEY,
       'period',
-      startDate.toISOString().split('T')[0],
+      startDate?.toISOString().split('T')[0] ?? 'all',
       endDate.toISOString().split('T')[0],
     ],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('records')
         .select('*')
-        .gte('start_time', start)
         .lte('start_time', end)
         .order('start_time', { ascending: false })
+
+      if (startDate) {
+        const start = getDayRange(startDate).start
+        query = query.gte('start_time', start)
+      }
+
+      const { data, error } = await query
 
       if (error) throw error
       return data as Record[]
