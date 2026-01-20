@@ -8,12 +8,12 @@
 | 2. Supabase設定 | 5/5 |
 | 3. 共通基盤 | 8/8 |
 | 4. ホーム画面 | 7/7 |
-| 5. 記録一覧画面 | 1/5 |
-| 6. 統計画面 | 0/5 |
+| 5. 記録一覧画面 | 5/5 |
+| 6. 統計画面 | 5/5 |
 | 7. タグ管理画面 | 5/5 |
-| 8. PWA対応 | 0/4 |
-| 9. テスト | 0/4 |
-| 10. デプロイ | 0/4 |
+| 8. PWA対応 | 4/4 |
+| 9. テスト | 3/4 |
+| 10. デプロイ | 2/4 |
 
 ---
 
@@ -65,19 +65,19 @@
 
 ## 5. 記録一覧画面
 
-- [ ] 日付ナビゲーション コンポーネント
+- [x] 日付ナビゲーション コンポーネント
 - [x] RecordCard コンポーネント（記録表示カード）
-- [ ] RecordEditModal コンポーネント（記録編集モーダル）
-- [ ] 手動記録追加機能
-- [ ] 記録一覧画面の統合（src/routes/history.tsx）
+- [x] RecordEditModal コンポーネント（記録編集モーダル）
+- [x] 手動記録追加機能
+- [x] 記録一覧画面の統合（src/routes/history.tsx）
 
 ## 6. 統計画面
 
-- [ ] PeriodSelector コンポーネント（期間選択）
-- [ ] TagFilter コンポーネント（タグフィルター）
-- [ ] TagBreakdownChart コンポーネント（円グラフ / Recharts）
-- [ ] DailyTrendChart コンポーネント（棒グラフ / Recharts）
-- [ ] 統計画面の統合（src/routes/stats.tsx）
+- [x] PeriodSelector コンポーネント（期間選択）
+- [x] TagFilter コンポーネント（タグフィルター）※TagBreakdownChartに統合
+- [x] TagBreakdownChart コンポーネント（円グラフ / Recharts）
+- [x] DailyTrendChart コンポーネント（棒グラフ / Recharts）
+- [x] 統計画面の統合（src/routes/stats.tsx）
 
 ## 7. タグ管理画面
 
@@ -89,24 +89,24 @@
 
 ## 8. PWA対応
 
-- [ ] vite-plugin-pwa 導入・設定
-- [ ] manifest.json 作成
-- [ ] PWAアイコン作成（192x192, 512x512, 180x180）
-- [ ] Service Worker キャッシュ戦略設定
+- [x] vite-plugin-pwa 導入・設定
+- [x] manifest.json 作成
+- [x] PWAアイコン作成（192x192, 512x512, 180x180）
+- [x] Service Worker キャッシュ戦略設定
 
 ## 9. テスト
 
-- [ ] Vitest 導入
-- [ ] コンポーネントテスト（React Testing Library）
-- [ ] カスタムフックテスト
-- [ ] E2Eテスト検討（Playwright / 任意）
+- [x] Vitest 導入
+- [x] コンポーネントテスト（React Testing Library）
+- [x] カスタムフックテスト
+- [ ] E2Eテスト検討（Playwright / 任意）※スキップ
 
 ## 10. デプロイ
 
-- [ ] Vercel プロジェクト作成
-- [ ] 環境変数設定（Supabase URL, Key）
-- [ ] 本番デプロイ
-- [ ] 動作確認（PC / スマホ）
+- [x] Vercel 設定ファイル作成（vercel.json）
+- [x] 環境変数テンプレート作成（.env.example）
+- [ ] Vercel プロジェクト作成・環境変数設定
+- [ ] 本番デプロイ・動作確認（PC / スマホ）
 
 ---
 
