@@ -1,26 +1,14 @@
-import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  PeriodSelector,
-  getPeriodDateRange,
-  type Period,
-} from '@/components/stats/PeriodSelector'
 import { TagBreakdownChart } from '@/components/stats/TagBreakdownChart'
 import { DailyTrendChart } from '@/components/stats/DailyTrendChart'
 import { useRecordsByPeriod } from '@/hooks/useRecords'
 
 export function StatsPage() {
-  const [period, setPeriod] = useState<Period>('1w')
-
-  const { start, end } = getPeriodDateRange(period)
-  const { data: records, isLoading } = useRecordsByPeriod(start, end)
+  const { data: records, isLoading } = useRecordsByPeriod(null, new Date())
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">統計</h2>
-        <PeriodSelector value={period} onChange={setPeriod} />
-      </div>
+      <h2 className="text-xl font-semibold">統計</h2>
 
       {isLoading ? (
         <div className="text-center py-8 text-muted-foreground">
@@ -39,10 +27,10 @@ export function StatsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">日別推移</CardTitle>
+              <CardTitle className="text-base">累計推移</CardTitle>
             </CardHeader>
             <CardContent>
-              <DailyTrendChart records={records ?? []} period={period} />
+              <DailyTrendChart records={records ?? []} />
             </CardContent>
           </Card>
         </div>
