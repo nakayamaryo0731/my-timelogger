@@ -1,24 +1,15 @@
-export interface Tag {
-  id: string
-  name: string
-  parent_id: string | null
-  color: string
-  sort_order: number
-  created_at: string
-  updated_at: string
-}
+// Supabase データベース型
+export type {
+  Database,
+  Tag,
+  TagInsert,
+  TagUpdate,
+  Record,
+  RecordInsert,
+  RecordUpdate,
+} from './database'
 
-export interface Record {
-  id: string
-  start_time: string
-  end_time: string | null
-  duration: number | null
-  tag_id: string
-  note: string | null
-  created_at: string
-  updated_at: string
-}
-
+// クライアント側の型
 export interface TimerState {
   isRunning: boolean
   startTime: string | null

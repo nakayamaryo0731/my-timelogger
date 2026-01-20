@@ -5,8 +5,8 @@
 | フェーズ | 進捗 |
 |----------|------|
 | 1. プロジェクトセットアップ | 6/6 |
-| 2. Supabase設定 | 0/5 |
-| 3. 共通基盤 | 6/8 |
+| 2. Supabase設定 | 5/5 |
+| 3. 共通基盤 | 8/8 |
 | 4. ホーム画面 | 2/7 |
 | 5. 記録一覧画面 | 0/5 |
 | 6. 統計画面 | 0/5 |
@@ -28,30 +28,30 @@
 
 ## 2. Supabase設定
 
-- [ ] Supabaseプロジェクト作成
-- [ ] tags テーブル作成
-- [ ] records テーブル作成
-- [ ] RLS（Row Level Security）設定（認証なしのため無効化）
-- [ ] Supabaseクライアント設定（src/lib/supabase.ts）
+- [x] Supabaseプロジェクト作成
+- [x] tags テーブル作成
+- [x] records テーブル作成
+- [x] RLS（Row Level Security）設定（認証なしのため無効化）
+- [x] Supabaseクライアント設定（src/lib/supabase.ts）
 
 ## 3. 共通基盤
 
 - [x] 型定義（src/types/）
   - [x] Tag 型
   - [x] Record 型
+  - [x] Database 型（Supabase用）
 - [x] 共通UIコンポーネント（shadcn/ui から必要なものを追加）
   - [x] Button
   - [x] Card
   - [x] Dialog / Modal
   - [x] Select / Dropdown
   - [x] Input
-  - [ ] DateTimePicker
 - [x] 共通レイアウト
   - [x] AppShell（Header + Main + BottomNav）
   - [x] BottomNavigation
-- [ ] カスタムフック
-  - [ ] useTags（タグCRUD）
-  - [ ] useRecords（記録CRUD）
+- [x] カスタムフック
+  - [x] useTags（タグCRUD）
+  - [x] useRecords（記録CRUD）
 
 ## 4. ホーム画面（タイマー機能）
 
