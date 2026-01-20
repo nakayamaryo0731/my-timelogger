@@ -4,10 +4,10 @@
 
 | フェーズ | 進捗 |
 |----------|------|
-| 1. プロジェクトセットアップ | 0/6 |
+| 1. プロジェクトセットアップ | 6/6 |
 | 2. Supabase設定 | 0/5 |
-| 3. 共通基盤 | 0/8 |
-| 4. ホーム画面 | 0/7 |
+| 3. 共通基盤 | 6/8 |
+| 4. ホーム画面 | 2/7 |
 | 5. 記録一覧画面 | 0/5 |
 | 6. 統計画面 | 0/5 |
 | 7. タグ管理画面 | 0/5 |
@@ -19,12 +19,12 @@
 
 ## 1. プロジェクトセットアップ
 
-- [ ] Vite + React + TypeScript プロジェクト作成
-- [ ] TailwindCSS 導入・設定
-- [ ] shadcn/ui 導入・ダークテーマ設定
-- [ ] React Router 導入・ルーティング設定
-- [ ] TanStack Query 導入
-- [ ] Zustand 導入
+- [x] Vite + React + TypeScript プロジェクト作成
+- [x] TailwindCSS 導入・設定
+- [x] shadcn/ui 導入・ダークテーマ設定
+- [x] React Router 導入・ルーティング設定
+- [x] TanStack Query 導入
+- [x] Zustand 導入
 
 ## 2. Supabase設定
 
@@ -36,19 +36,19 @@
 
 ## 3. 共通基盤
 
-- [ ] 型定義（src/types/）
-  - [ ] Tag 型
-  - [ ] Record 型
-- [ ] 共通UIコンポーネント（shadcn/ui から必要なものを追加）
-  - [ ] Button
-  - [ ] Card
-  - [ ] Dialog / Modal
-  - [ ] Select / Dropdown
-  - [ ] Input
+- [x] 型定義（src/types/）
+  - [x] Tag 型
+  - [x] Record 型
+- [x] 共通UIコンポーネント（shadcn/ui から必要なものを追加）
+  - [x] Button
+  - [x] Card
+  - [x] Dialog / Modal
+  - [x] Select / Dropdown
+  - [x] Input
   - [ ] DateTimePicker
-- [ ] 共通レイアウト
-  - [ ] AppShell（Header + Main + BottomNav）
-  - [ ] BottomNavigation
+- [x] 共通レイアウト
+  - [x] AppShell（Header + Main + BottomNav）
+  - [x] BottomNavigation
 - [ ] カスタムフック
   - [ ] useTags（タグCRUD）
   - [ ] useRecords（記録CRUD）
@@ -58,8 +58,8 @@
 - [ ] TimerDisplay コンポーネント（経過時間表示）
 - [ ] TagSelector コンポーネント（階層タグ選択）
 - [ ] TimerControls コンポーネント（開始/停止/破棄ボタン）
-- [ ] タイマー状態管理（Zustand store）
-- [ ] タイマー状態の永続化（localStorage）
+- [x] タイマー状態管理（Zustand store）
+- [x] タイマー状態の永続化（localStorage）
 - [ ] TodayRecordsList コンポーネント（今日の記録一覧）
 - [ ] ホーム画面の統合（src/routes/index.tsx）
 
