@@ -13,7 +13,7 @@ export function HomePage() {
       <section className="py-4">
         <TimerDisplay />
 
-        <div className="max-w-xs mx-auto mb-6">
+        <div className="mb-6">
           <TagSelector
             value={selectedTagId}
             onChange={setSelectedTagId}
