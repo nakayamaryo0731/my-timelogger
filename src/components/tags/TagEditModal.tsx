@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useTags, useCreateTag, useUpdateTag, useDeleteTag } from '@/hooks/useTags'
+import { deriveChildColor } from '@/lib/color'
 import type { Tag } from '@/types'
 
 const COLORS = [
@@ -27,6 +28,8 @@ const COLORS = [
   '#ec4899', // pink
   '#6366f1', // indigo
   '#14b8a6', // teal
+  '#f97316', // orange
+  '#3b82f6', // blue
 ]
 
 interface TagEditModalProps {
@@ -53,6 +56,31 @@ export function TagEditModal({
 
   const isEditing = !!tag
 
+  // 未使用の色を取得
+  const getUnusedColor = () => {
+    if (!tags) return COLORS[0]
+    // 親タグ（ルートタグ）で使用されている色を取得
+    const usedColors = new Set(
+      tags.filter(t => !t.parent_id).map(t => t.color)
+    )
+    // 未使用の色を探す
+    const unusedColor = COLORS.find(c => !usedColors.has(c))
+    return unusedColor ?? COLORS[0]
+  }
+
+  // 親タグの色から継承色をプレビュー
+  const getPreviewColor = () => {
+    if (!parentId || !tags) return COLORS[0]
+    const parent = tags.find(t => t.id === parentId)
+    if (!parent) return COLORS[0]
+
+    // 同じ親を持つ既存の兄弟タグの数を数える（新規作成時のインデックス）
+    const siblings = tags.filter(t => t.parent_id === parentId && t.id !== tag?.id)
+    const index = siblings.length
+
+    return deriveChildColor(parent.color, index)
+  }
+
   // 初期値を設定
   useEffect(() => {
     if (tag) {
@@ -61,26 +89,29 @@ export function TagEditModal({
       setParentId(tag.parent_id)
     } else {
       setName('')
-      setColor(COLORS[0])
+      setColor(getUnusedColor())
       setParentId(defaultParentId ?? null)
     }
-  }, [tag, defaultParentId, open])
+  }, [tag, defaultParentId, open, tags])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) return
 
+    // 親タグがある場合は継承色を使用
+    const finalColor = parentId ? getPreviewColor() : color
+
     if (isEditing && tag) {
       await updateTag.mutateAsync({
         id: tag.id,
         name: name.trim(),
-        color,
+        color: finalColor,
         parent_id: parentId,
       })
     } else {
       await createTag.mutateAsync({
         name: name.trim(),
-        color,
+        color: finalColor,
         parent_id: parentId,
       })
     }
@@ -158,22 +189,36 @@ export function TagEditModal({
             </Select>
           </div>
 
-          <div>
-            <label className="text-sm font-medium mb-2 block">カラー</label>
-            <div className="flex gap-2 flex-wrap">
-              {COLORS.map(c => (
-                <button
-                  key={c}
-                  type="button"
-                  className={`w-8 h-8 rounded-full transition-transform ${
-                    color === c ? 'ring-2 ring-offset-2 ring-offset-background ring-primary scale-110' : ''
-                  }`}
-                  style={{ backgroundColor: c }}
-                  onClick={() => setColor(c)}
-                />
-              ))}
+          {/* カラー選択：親タグがない場合のみ表示 */}
+          {!parentId ? (
+            <div>
+              <label className="text-sm font-medium mb-2 block">カラー</label>
+              <div className="flex gap-2 flex-wrap">
+                {COLORS.map(c => (
+                  <button
+                    key={c}
+                    type="button"
+                    className={`w-8 h-8 rounded-full transition-transform ${
+                      color === c ? 'ring-2 ring-offset-2 ring-offset-background ring-primary scale-110' : ''
+                    }`}
+                    style={{ backgroundColor: c }}
+                    onClick={() => setColor(c)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div>
+              <label className="text-sm font-medium mb-2 block">カラー</label>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span
+                  className="w-6 h-6 rounded-full"
+                  style={{ backgroundColor: getPreviewColor() }}
+                />
+                <span>親タグの色を継承</span>
+              </div>
+            </div>
+          )}
 
           <DialogFooter className="gap-2">
             {isEditing && (
