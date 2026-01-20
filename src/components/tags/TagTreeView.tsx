@@ -62,7 +62,7 @@ function TagNode({ tag, depth, onEdit, isLast }: TagNodeProps) {
 
         {/* 色 */}
         <span
-          className="w-3 h-3 rounded-full flex-shrink-0"
+          className="w-3 h-3 rounded-full shrink-0"
           style={{ backgroundColor: tag.color }}
         />
 
